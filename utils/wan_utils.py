@@ -1,4 +1,3 @@
-# v1.0.0 | 2025-11-01 | ComfyUI-AV-Handles | Claude Sonnet 4.5
 """
 Utilities for WAN (Weighted Attention Network) frame calculations
 WAN-compatible frame counts follow the pattern: 4n + 1
