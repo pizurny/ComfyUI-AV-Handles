@@ -8,7 +8,7 @@ Add and remove stabilization frames with synchronized audio for video diffusion 
 
 ## 🎯 What This Does
 
-Video diffusion models (AnimateDiff, etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
+Video diffusion models often need a few frames to stabilize before producing quality output. This node pack lets you:
 
 - **Add** repeated first frames as "handles" before your sequence
 - **Sync** audio silence to keep A/V perfectly aligned  
@@ -36,7 +36,7 @@ Search for "AV Handles" and install directly.
 ### Method 2: Git Clone
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/yourusername/ComfyUI-AV-Handles.git
+git clone https://github.com/pizurny/ComfyUI-AV-Handles.git
 # Restart ComfyUI
 ```
 
