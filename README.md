@@ -30,13 +30,13 @@ Audio (2.0s) + FPS:30 → Add handles → Process → Trim handles → Audio res
 
 ## 📦 Installation
 
-### Method 1: ComfyUI Manager
+### Method 1: ComfyUI Manager (SOON)
 Search for "AV Handles" and install directly.
 
 ### Method 2: Git Clone
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/yourusername/ComfyUI-AV-Handles.git
+git clone https://github.com/pizurny/ComfyUI-AV-Handles.git
 # Restart ComfyUI
 ```
 
