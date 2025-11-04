@@ -8,7 +8,7 @@ Add and remove stabilization frames with synchronized audio for video diffusion 
 
 ## 🎯 What This Does
 
-Video diffusion models often need a few frames to stabilize before producing quality output. This node pack lets you:
+Video diffusion models (AnimateDiff, etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
 
 - **Add** repeated first frames as "handles" before your sequence
 - **Sync** audio silence to keep A/V perfectly aligned  
@@ -30,13 +30,13 @@ Audio (2.0s) + FPS:30 → Add handles → Process → Trim handles → Audio res
 
 ## 📦 Installation
 
-### Method 1: ComfyUI Manager (SOON)
+### Method 1: ComfyUI Manager
 Search for "AV Handles" and install directly.
 
 ### Method 2: Git Clone
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/pizurny/ComfyUI-AV-Handles.git
+git clone https://github.com/yourusername/ComfyUI-AV-Handles.git
 # Restart ComfyUI
 ```
 
@@ -66,7 +66,7 @@ Nodes will appear under: **`video/handles`**
 Adds handle frames by repeating the first frame + audio silence.
 
 **Required Inputs:**
-- `handle_frames` (INT) - Frames to add (default: 8, range: 0-100)
+- `handle_frames` (INT) - Frames to add (default: 8, range: 0-100). Set to 0 with `round_to_wan` enabled for auto-WAN mode.
 
 **Optional Inputs:**
 - `images` (IMAGE) - Input image batch (optional for audio-only)
@@ -74,7 +74,9 @@ Adds handle frames by repeating the first frame + audio silence.
 - `round_to_wan` (BOOL) - Round to WAN-compatible count (4n+1)
 - `manual_fps` (FLOAT) - Manual FPS override (default: 0 = auto-detect, range: 0-120)
 
-**Outputs:** `images`, `audio`, `total_frames`, `info`
+**Outputs:** `images`, `audio`, `total_frames`, `handles_added`, `info`
+
+**Note:** Connect `handles_added` output to Trim node's `handle_frames` input for automatic sync (essential when using WAN rounding or auto-WAN mode).
 
 ### AV Handles (Trim)
 
@@ -141,12 +143,12 @@ Output: Original 3.0s audio restored ✓
 Load Images (47 frames)
     ↓
 AV Handles Add (handle_frames: 8, round_to_wan: ✓)
-Output: 57 frames (rounded to 4×14+1, actually added 10 handles)
+Output: 57 frames, handles_added: 10 (rounded to 4×14+1)
     ↓
 Process with WAN model
     ↓
-AV Handles Trim (handle_frames: 10) ← Check info output!
-Output: 47 frames
+AV Handles Trim (handle_frames: ← connect handles_added)
+Output: 47 frames ✓ (automatic sync!)
 ```
 
 ---
@@ -227,9 +229,10 @@ Issues and pull requests welcome! This is a simple utility pack, so let's keep i
 
 ---
 
-**Made for the ComfyUI community** | v1.2.0
+**Made for the ComfyUI community** | v1.3.0
 
 ### Version History
+- **v1.3.0** - Added `handles_added` output for auto-sync with Trim node, WAN rounding always rounds up, auto-WAN mode (handle_frames=0)
 - **v1.2.0** - Made images optional for audio-only workflows, both nodes now fully support audio processing without video
 - **v1.1.0** - Added manual FPS input, improved audio handling for all tensor formats
 - **v1.0.0** - Initial release with basic handle add/trim functionality

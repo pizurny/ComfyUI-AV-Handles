@@ -1,5 +1,5 @@
 import torch
-from ..utils.wan_utils import calculate_wan_frames, is_wan_compatible
+from ..utils.wan_utils import calculate_wan_frames, calculate_next_wan_frames, is_wan_compatible
 
 
 class AVHandlesAdd:
@@ -9,8 +9,8 @@ class AVHandlesAdd:
     """
     
     CATEGORY = "video/handles"
-    RETURN_TYPES = ("IMAGE", "AUDIO", "INT", "STRING")
-    RETURN_NAMES = ("images", "audio", "total_frames", "info")
+    RETURN_TYPES = ("IMAGE", "AUDIO", "INT", "INT", "STRING")
+    RETURN_NAMES = ("images", "audio", "total_frames", "handles_added", "info")
     FUNCTION = "add_handles"
     
     @classmethod
@@ -47,17 +47,22 @@ class AVHandlesAdd:
     def add_handles(self, handle_frames, images=None, audio=None, round_to_wan=False, manual_fps=0.0):
         """
         Add frame handles and audio silence
-        
+
         Args:
             images: Input image tensor [B, H, W, C]
             handle_frames: Number of frames to add
             audio: Optional audio dict with 'waveform' and 'sample_rate'
             round_to_wan: Round total frames to WAN-compatible count
             manual_fps: Manual FPS override (0 = auto-detect)
-            
+
         Returns:
-            Tuple of (images, audio, total_frames, info_string)
+            Tuple of (images, audio, total_frames, handles_added, info_string)
         """
+        # Defensive check for None handle_frames
+        if handle_frames is None:
+            handle_frames = 0
+            print("[AVHandlesAdd] Warning: handle_frames is None, defaulting to 0")
+
         # Handle image processing if provided
         images_out = None
         original_frames = 0
@@ -66,21 +71,30 @@ class AVHandlesAdd:
         if images is not None and images.shape[0] > 0:
             batch_size = images.shape[0]
             original_frames = batch_size
-            
-            # Calculate target frame count
-            target_frames = original_frames + handle_frames
-            
+
             # Round to WAN if requested
             if round_to_wan:
-                wan_frames = calculate_wan_frames(target_frames)
-                actual_handles = wan_frames - original_frames
-                # Ensure we don't go negative
-                if actual_handles < 0:
-                    wan_frames = calculate_wan_frames(original_frames)
+                if handle_frames == 0:
+                    # Auto-calculate minimum handles to reach next WAN value
+                    wan_frames = calculate_next_wan_frames(original_frames)
                     actual_handles = wan_frames - original_frames
+                    print(f"[AVHandlesAdd] Auto WAN mode: {original_frames} frames → {wan_frames} frames (adding {actual_handles} handles)")
+                else:
+                    # Calculate target and round up to next WAN value
+                    target_frames = original_frames + handle_frames
+                    wan_frames = calculate_wan_frames(target_frames)
+                    actual_handles = wan_frames - original_frames
+
+                    # With always-round-up logic, actual_handles should always be >= handle_frames
+                    # But add safety check just in case
+                    if actual_handles < 0:
+                        # This shouldn't happen with ceil logic, but handle defensively
+                        wan_frames = calculate_next_wan_frames(original_frames)
+                        actual_handles = wan_frames - original_frames
+                        print(f"[AVHandlesAdd] Warning: Negative handles detected, adjusted to {actual_handles}")
             else:
                 actual_handles = handle_frames
-                wan_frames = target_frames
+                wan_frames = original_frames + handle_frames
             
             # Add frame handles by repeating first frame
             if actual_handles > 0:
@@ -198,6 +212,16 @@ class AVHandlesAdd:
                 f"Handle frames added: {actual_handles}",
                 f"Total frames: {final_frames}",
             ]
+
+            # Add WAN status
+            if round_to_wan:
+                if handle_frames == 0 and actual_handles > 0:
+                    # Auto-WAN mode was used
+                    info_parts.append("✓ Auto-WAN (0 → next WAN value)")
+                elif is_wan_compatible(final_frames):
+                    info_parts.append("✓ WAN-compatible")
+                else:
+                    info_parts.append("✗ Not WAN-compatible")
         else:
             # Audio-only mode
             info_parts = [
@@ -205,10 +229,6 @@ class AVHandlesAdd:
                 f"Handle frames: {actual_handles}",
                 f"FPS: {manual_fps:.2f}",
             ]
-        
-        if round_to_wan and images_out is not None:
-            wan_status = "✓ WAN-compatible" if is_wan_compatible(final_frames) else "✗ Not WAN-compatible"
-            info_parts.append(wan_status)
         
         if audio is not None and audio_out is not None:
             orig_waveform = audio["waveform"]
@@ -238,13 +258,16 @@ class AVHandlesAdd:
                 info_parts.append(f"Audio: {orig_duration:.2f}s → {new_duration:.2f}s")
         
         info_string = " | ".join(info_parts)
-        
-        return (images_out, audio_out, final_frames, info_string)
+
+        return (images_out, audio_out, final_frames, actual_handles, info_string)
     
     @classmethod
     def VALIDATE_INPUTS(cls, handle_frames, **kwargs):
         """Validate node inputs"""
+        if handle_frames is None:
+            return True  # Allow None during validation
+
         if handle_frames < 0:
             return "Handle frames must be non-negative"
-        
+
         return True

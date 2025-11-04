@@ -42,16 +42,21 @@ class AVHandlesTrim:
     def trim_handles(self, handle_frames, images=None, audio=None, manual_fps=0.0):
         """
         Remove frame handles and audio silence
-        
+
         Args:
             images: Input image tensor [B, H, W, C]
             handle_frames: Number of frames to remove from beginning
             audio: Optional audio dict with 'waveform' and 'sample_rate'
             manual_fps: Manual FPS override (0 = auto-detect)
-            
+
         Returns:
             Tuple of (images, audio, remaining_frames, info_string)
         """
+        # Defensive check for None handle_frames
+        if handle_frames is None:
+            handle_frames = 0
+            print("[AVHandlesTrim] Warning: handle_frames is None, defaulting to 0")
+
         # Handle image processing if provided
         images_out = None
         original_frames = 0
@@ -219,7 +224,10 @@ class AVHandlesTrim:
     @classmethod
     def VALIDATE_INPUTS(cls, handle_frames, **kwargs):
         """Validate node inputs"""
+        if handle_frames is None:
+            return True  # Allow None during validation (e.g., when connected but not yet executed)
+
         if handle_frames < 0:
             return "Handle frames must be non-negative"
-        
+
         return True
