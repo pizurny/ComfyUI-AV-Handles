@@ -29,7 +29,7 @@ Documentation = "https://github.com/pizurny/ComfyUI-AV-Handles/wiki"
 "Bug Tracker" = "https://github.com/pizurny/ComfyUI-AV-Handles/issues"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "pizurny"
 DisplayName = "ComfyUI-AV-Handles"
 Icon = ""
 includes = [] 
