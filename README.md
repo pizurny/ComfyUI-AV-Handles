@@ -122,21 +122,22 @@ AV Handles Trim (handle_frames: 12, audio connected)
 Output: 60 frames, 2.0s audio ✓
 ```
 
-### Audio-Only Processing (NEW!)
+### Audio-Only Processing
 ```
 Load Audio (3.0s)
     ↓
 AV Handles Add (handle_frames: 24, manual_fps: 30.0, audio connected, NO images)
 Output: Audio with 0.8s silence added (3.8s total)
-Info: "Audio-only mode | Handle frames: 24 | FPS: 30.00"
+Info: "Audio-only mode | Original frames: 90 | Handle frames added: 24 | Total frames: 114 | FPS: 30.00 | Audio: 3.000s → 3.800s"
     ↓
 Process Audio (effects, filters, etc.)
     ↓
 AV Handles Trim (handle_frames: 24, manual_fps: 30.0, audio connected, NO images)
 Output: Original 3.0s audio restored ✓
+Info: "Audio-only mode | Original frames: 114 | Frames trimmed: 24 | Remaining frames: 90 | FPS: 30.00 | Audio: 3.800s → 3.000s"
 ```
 
-**Note:** For audio-only workflows, `manual_fps` is required. The nodes will warn if not set and default to 30 FPS.
+**Note:** For audio-only workflows, `manual_fps` is required. The nodes will display calculated frame counts in the info output.
 
 ### WAN Compatibility
 ```
@@ -177,7 +178,7 @@ silence_duration = handle_frames / fps
 Set `manual_fps` to override auto-detection for specific framerates (23.976, 29.97, etc.)
 
 **3. Audio-Only (Requires Manual FPS):**
-Process audio without video by only connecting audio input and setting `manual_fps`
+Process audio without video by only connecting audio input and setting `manual_fps`. The info output will show calculated virtual frame counts based on audio duration and FPS.
 
 **Example:**
 - 60 frames at 30 FPS = 2.0s duration
@@ -196,11 +197,13 @@ Process audio without video by only connecting audio input and setting `manual_f
 | Audio is None | Audio is optional - expected for image-only workflows |
 | Import error | Check folder structure - nodes must be in `nodes/` subfolder |
 | FPS detection issues | Use `manual_fps` to override auto-detection |
+| Audio-only mode not showing frame counts | Update to v1.3.1 or later |
 
 **Pro tips:** 
 - Always check the `info` output string - it shows exactly what happened
 - Console output shows detected FPS and audio processing details
 - For audio-only workflows, always set `manual_fps` to your target framerate
+- In audio-only mode, the info output now displays calculated frame counts
 
 ---
 
@@ -214,6 +217,7 @@ Process audio without video by only connecting audio input and setting `manual_f
 - **Audio formats** - Handles 1D, 2D, and 3D audio tensors automatically
 - **FPS detection** - Auto-calculates from video/audio or accepts manual input
 - **Precision** - Audio durations shown with 3 decimal places for short clips
+- **Improved rounding** - Uses `round()` instead of `int()` for sample calculations (v1.3.1+)
 
 ---
 
@@ -229,9 +233,10 @@ Issues and pull requests welcome! This is a simple utility pack, so let's keep i
 
 ---
 
-**Made for the ComfyUI community** | v1.3.0
+**Made for the ComfyUI community** | v1.3.1
 
 ### Version History
+- **v1.3.1** - Audio-only mode now displays calculated frame counts in info output, improved sample rounding precision (int→round), added version headers, FPS warnings now visible in info output
 - **v1.3.0** - Added `handles_added` output for auto-sync with Trim node, WAN rounding always rounds up, auto-WAN mode (handle_frames=0)
 - **v1.2.0** - Made images optional for audio-only workflows, both nodes now fully support audio processing without video
 - **v1.1.0** - Added manual FPS input, improved audio handling for all tensor formats

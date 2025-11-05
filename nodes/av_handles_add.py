@@ -162,7 +162,7 @@ class AVHandlesAdd:
                 
                 # Calculate silence duration to match handle frames duration
                 silence_duration = actual_handles / fps  # Duration in seconds
-                silence_samples = int(silence_duration * sample_rate)
+                silence_samples = round(silence_duration * sample_rate)
                 
                 # Debug output
                 print(f"[AVHandlesAdd] Adding {actual_handles} handle frames")
@@ -202,8 +202,23 @@ class AVHandlesAdd:
         if images_out is not None:
             final_frames = images_out.shape[0]
         else:
-            # Audio-only mode: calculate virtual frame count
-            final_frames = actual_handles if original_frames == 0 else original_frames + actual_handles
+            # Audio-only mode: calculate virtual frame count from audio duration
+            if audio is not None:
+                audio_waveform = audio["waveform"]
+                if len(audio_waveform.shape) == 3:
+                    audio_samples = audio_waveform.shape[2]
+                elif len(audio_waveform.shape) == 2:
+                    audio_samples = audio_waveform.shape[1]
+                else:
+                    audio_samples = audio_waveform.shape[0]
+                
+                audio_duration = audio_samples / audio["sample_rate"]
+                fps_to_use = manual_fps if manual_fps > 0 else 30.0
+                original_audio_frames = round(audio_duration * fps_to_use)
+                final_frames = original_audio_frames + actual_handles
+            else:
+                # Fallback if no audio provided
+                final_frames = actual_handles
         
         # Build info string
         if images_out is not None:
@@ -223,12 +238,47 @@ class AVHandlesAdd:
                 else:
                     info_parts.append("✗ Not WAN-compatible")
         else:
-            # Audio-only mode
-            info_parts = [
-                f"Audio-only mode",
-                f"Handle frames: {actual_handles}",
-                f"FPS: {manual_fps:.2f}",
-            ]
+            # Audio-only mode: calculate virtual frame counts
+            if audio is not None:
+                audio_waveform = audio["waveform"]
+                if len(audio_waveform.shape) == 3:
+                    audio_samples = audio_waveform.shape[2]
+                elif len(audio_waveform.shape) == 2:
+                    audio_samples = audio_waveform.shape[1]
+                else:
+                    audio_samples = audio_waveform.shape[0]
+                
+                audio_duration = audio_samples / audio["sample_rate"]
+                fps_to_use = manual_fps if manual_fps > 0 else 30.0
+                original_audio_frames = round(audio_duration * fps_to_use)
+                total_audio_frames = original_audio_frames + actual_handles
+                
+                info_parts = [
+                    f"Audio-only mode",
+                    f"Original frames: {original_audio_frames}",
+                    f"Handle frames added: {actual_handles}",
+                    f"Total frames: {total_audio_frames}",
+                    f"FPS: {fps_to_use:.2f}",
+                ]
+                
+                # Add WAN status for audio-only mode
+                if round_to_wan:
+                    if handle_frames == 0 and actual_handles > 0:
+                        info_parts.append("✓ Auto-WAN (0 → next WAN value)")
+                    elif is_wan_compatible(total_audio_frames):
+                        info_parts.append("✓ WAN-compatible")
+                    else:
+                        info_parts.append("✗ Not WAN-compatible")
+                
+                # Add FPS warning if not manually set
+                if manual_fps <= 0:
+                    info_parts.append("⚠ Using default 30 FPS")
+            else:
+                info_parts = [
+                    f"Audio-only mode",
+                    f"Handle frames: {actual_handles}",
+                    f"FPS: {manual_fps:.2f}",
+                ]
         
         if audio is not None and audio_out is not None:
             orig_waveform = audio["waveform"]

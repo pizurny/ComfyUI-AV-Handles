@@ -81,10 +81,25 @@ class AVHandlesTrim:
             images_out = images[handle_frames:]
             remaining_frames = images_out.shape[0]
         else:
-            # Audio-only mode
-            if manual_fps <= 0:
-                print("[AVHandlesTrim] Warning: Audio-only mode requires manual_fps to be set")
-                manual_fps = 30.0  # Default fallback
+            # Audio-only mode: calculate virtual frame count from audio
+            if audio is not None:
+                audio_waveform = audio["waveform"]
+                if len(audio_waveform.shape) == 3:
+                    audio_samples = audio_waveform.shape[2]
+                elif len(audio_waveform.shape) == 2:
+                    audio_samples = audio_waveform.shape[1]
+                else:
+                    audio_samples = audio_waveform.shape[0]
+                
+                audio_duration = audio_samples / audio["sample_rate"]
+                fps_to_use = manual_fps if manual_fps > 0 else 30.0
+                original_frames = round(audio_duration * fps_to_use)
+                remaining_frames = original_frames - handle_frames
+            else:
+                # Fallback if no audio provided
+                if manual_fps <= 0:
+                    print("[AVHandlesTrim] Warning: Audio-only mode requires manual_fps to be set")
+                    manual_fps = 30.0  # Default fallback
         
         # Process audio if provided
         audio_out = None
@@ -139,7 +154,14 @@ class AVHandlesTrim:
                 
                 # Calculate samples to trim based on handle frames duration
                 trim_duration = handle_frames / fps  # Duration in seconds
-                trim_samples = int(trim_duration * sample_rate)
+                trim_samples = round(trim_duration * sample_rate)
+                
+                # Validate we have enough samples to trim
+                if trim_samples > total_samples:
+                    raise ValueError(
+                        f"Cannot trim {trim_duration:.3f}s ({trim_samples} samples) "
+                        f"from audio of {audio_duration:.3f}s ({total_samples} samples)"
+                    )
                 
                 # Debug output
                 print(f"[AVHandlesTrim] Trimming {handle_frames} handle frames")
@@ -183,12 +205,42 @@ class AVHandlesTrim:
             if is_wan_compatible(remaining_frames):
                 info_parts.append("✓ WAN-compatible")
         else:
-            # Audio-only mode
-            info_parts = [
-                f"Audio-only mode",
-                f"Handle frames trimmed: {handle_frames}",
-                f"FPS: {manual_fps:.2f}",
-            ]
+            # Audio-only mode: calculate virtual frame counts
+            if audio is not None:
+                audio_waveform = audio["waveform"]
+                if len(audio_waveform.shape) == 3:
+                    audio_samples = audio_waveform.shape[2]
+                elif len(audio_waveform.shape) == 2:
+                    audio_samples = audio_waveform.shape[1]
+                else:
+                    audio_samples = audio_waveform.shape[0]
+                
+                audio_duration = audio_samples / audio["sample_rate"]
+                fps_to_use = manual_fps if manual_fps > 0 else 30.0
+                original_audio_frames = round(audio_duration * fps_to_use)
+                remaining_audio_frames = original_audio_frames - handle_frames
+                
+                info_parts = [
+                    f"Audio-only mode",
+                    f"Original frames: {original_audio_frames}",
+                    f"Frames trimmed: {handle_frames}",
+                    f"Remaining frames: {remaining_audio_frames}",
+                    f"FPS: {fps_to_use:.2f}",
+                ]
+                
+                # Check if result is WAN-compatible
+                if is_wan_compatible(remaining_audio_frames):
+                    info_parts.append("✓ WAN-compatible")
+                
+                # Add FPS warning if not manually set
+                if manual_fps <= 0:
+                    info_parts.append("⚠ Using default 30 FPS")
+            else:
+                info_parts = [
+                    f"Audio-only mode",
+                    f"Handle frames trimmed: {handle_frames}",
+                    f"FPS: {manual_fps:.2f}",
+                ]
         
         if audio is not None and audio_out is not None:
             orig_waveform = audio["waveform"]
