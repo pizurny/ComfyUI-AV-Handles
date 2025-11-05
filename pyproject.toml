@@ -1,7 +1,7 @@
 [project]
 name = "av-handles"
 description = "Audio/Video handle management for ComfyUI workflows\nAdd and remove stabilization frames with synchronized audio for video diffusion models."
-version = "1.0.0"
+version = "1.3.1"
 license = {file = "LICENSE"} 
 # classifiers = [
 #     # For OS-independent nodes (works on all operating systems)
