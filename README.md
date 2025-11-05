@@ -30,7 +30,7 @@ Audio (2.0s) + FPS:30 → Add handles → Process → Trim handles → Audio res
 
 ## 📦 Installation
 
-### Method 1: ComfyUI Manager (SOON)
+### Method 1: ComfyUI Manager 
 Search for "AV Handles" and install directly.
 
 ### Method 2: Git Clone
