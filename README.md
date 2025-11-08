@@ -3,7 +3,7 @@
 
 https://github.com/user-attachments/assets/79817bcc-6f69-490e-99e9-a84ed106c597
 
-> **Result:** Handle frames added → AnimateDiff processing → Handles trimmed = Perfect sync, stable output from frame 1 ✓
+> **Result:** 6 Handle frames added → WAN S2V processing → Handles trimmed = Perfect sync, stable output from frame 1 ✓
 
 <details>
 <summary>🔧 <b>View Workflow Example</b></summary>
