@@ -21,7 +21,7 @@ Audio/Video handle management for ComfyUI workflows
 
 Add and remove stabilization frames with synchronized audio for video diffusion models.
 
-Video diffusion models (AnimateDiff, etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
+Video diffusion models (WAN, etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
 
 - Add repeated first frames as "handles" before your sequence
 - Sync audio silence to keep A/V perfectly aligned  
