@@ -1,24 +1,15 @@
 # ComfyUI-AV-Handles
 
-## 🎬 See it in action
-
 
 https://github.com/user-attachments/assets/79817bcc-6f69-490e-99e9-a84ed106c597
 
-
-https://github.com/user-attachments/assets/av_00007-audio.mp4
-
 > **Result:** Handle frames added → AnimateDiff processing → Handles trimmed = Perfect sync, stable output from frame 1 ✓
-
-<p align="center">
-  <img src="example_workflows/files/av_00007.png" alt="AV Handles Output Example" width="800"/>
-</p>
 
 <details>
 <summary>🔧 <b>View Workflow Example</b></summary>
 <br/>
 <p align="center">
-  <img src="example_workflows/files/WAN_S2V_Example_workflow.png" alt="WAN S2V Example Workflow"/>
+  <img src="example_workflows/WAN_S2V_Example_workflow.png" alt="WAN S2V Example Workflow"/>
 </p>
 </details>
 
