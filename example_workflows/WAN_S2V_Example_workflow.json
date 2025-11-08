@@ -1,0 +1,1218 @@
+{
+  "id": "ea7ba43e-ab56-40d4-a298-423f5bfe4462",
+  "revision": 0,
+  "last_node_id": 198,
+  "last_link_id": 538,
+  "nodes": [
+    {
+      "id": 149,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -190.5393322777639,
+        2025.3725814595327
+      ],
+      "size": [
+        425.27801513671875,
+        180.6060791015625
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 442
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            450
+          ]
+        }
+      ],
+      "title": "CLIP Text Encode (Negative Prompt)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 151,
+      "type": "AudioEncoderLoader",
+      "pos": [
+        -632.5700031127923,
+        2179.549198027421
+      ],
+      "size": [
+        390,
+        70
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO_ENCODER",
+          "type": "AUDIO_ENCODER",
+          "links": [
+            485
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "AudioEncoderLoader",
+        "models": [
+          {
+            "name": "wav2vec2_large_english_fp16.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/audio_encoders/wav2vec2_large_english_fp16.safetensors",
+            "directory": "audio_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "wav2vec2_large_english_fp16.safetensors"
+      ]
+    },
+    {
+      "id": 161,
+      "type": "UNETLoader",
+      "pos": [
+        -632.5700031127923,
+        1779.5491980274219
+      ],
+      "size": [
+        390,
+        82
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            531
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "UNETLoader",
+        "models": [
+          {
+            "name": "wan2.2_s2v_14B_fp8_scaled.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_s2v_14B_fp8_scaled.safetensors",
+            "directory": "diffusion_models"
+          }
+        ]
+      },
+      "widgets_values": [
+        "wan2.2_s2v_14B_fp8_scaled.safetensors",
+        "default"
+      ]
+    },
+    {
+      "id": 147,
+      "type": "CLIPLoader",
+      "pos": [
+        -632.5700031127923,
+        1909.5491980274219
+      ],
+      "size": [
+        390,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            442,
+            461
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "CLIPLoader",
+        "models": [
+          {
+            "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+            "directory": "text_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "WAN\\umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan",
+        "default"
+      ]
+    },
+    {
+      "id": 150,
+      "type": "VAELoader",
+      "pos": [
+        -632.5700031127923,
+        2069.5491980274214
+      ],
+      "size": [
+        390,
+        60
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            451,
+            522
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "VAELoader",
+        "models": [
+          {
+            "name": "wan_2.1_vae.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors",
+            "directory": "vae"
+          }
+        ]
+      },
+      "widgets_values": [
+        "wan_2_1\\wan_2.1_vae.safetensors"
+      ]
+    },
+    {
+      "id": 159,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -190.5393322777639,
+        1795.3725814595327
+      ],
+      "size": [
+        422.84503173828125,
+        164.31304931640625
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 461
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            449
+          ]
+        }
+      ],
+      "title": "CLIP Text Encode (Positive Prompt)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "woman talking"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 160,
+      "type": "LoadImage",
+      "pos": [
+        -608.9639958649686,
+        2567.582749792235
+      ],
+      "size": [
+        360,
+        314
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            453
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "slot_index": 1,
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "avh.png",
+        "image"
+      ]
+    },
+    {
+      "id": 162,
+      "type": "LoadAudio",
+      "pos": [
+        -604.1967252498779,
+        2347.787308447917
+      ],
+      "size": [
+        360,
+        140
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            516
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "ComfyUI_00006_.mp3",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 173,
+      "type": "AudioEncoderEncode",
+      "pos": [
+        146.42685970871878,
+        2337.8001721005685
+      ],
+      "size": [
+        285.087890625,
+        46
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio_encoder",
+          "type": "AUDIO_ENCODER",
+          "link": 485
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 518
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO_ENCODER_OUTPUT",
+          "type": "AUDIO_ENCODER_OUTPUT",
+          "links": [
+            452
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "AudioEncoderEncode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 153,
+      "type": "WanSoundImageToVideo",
+      "pos": [
+        389.46083056255355,
+        2062.3744211369844
+      ],
+      "size": [
+        270,
+        250
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 449
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 450
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 451
+        },
+        {
+          "name": "audio_encoder_output",
+          "shape": 7,
+          "type": "AUDIO_ENCODER_OUTPUT",
+          "link": 452
+        },
+        {
+          "name": "ref_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 453
+        },
+        {
+          "name": "control_video",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "ref_motion",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "length",
+          "type": "INT",
+          "widget": {
+            "name": "length"
+          },
+          "link": 529
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            444
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            445
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            446
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "WanSoundImageToVideo"
+      },
+      "widgets_values": [
+        720,
+        720,
+        77,
+        1
+      ]
+    },
+    {
+      "id": 190,
+      "type": "VAEDecode",
+      "pos": [
+        1095.1340193116678,
+        2223.049794776603
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 521
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 522
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            523
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.67",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 196,
+      "type": "Note",
+      "pos": [
+        -163.1260649245602,
+        2583.53527711924
+      ],
+      "size": [
+        260.483408183373,
+        178.0370445654362
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Adding 6 frames of audio silence, fps is important here so node can calculate length of silence in seconds"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 189,
+      "type": "AVHandlesTrim",
+      "pos": [
+        1386.6467161189435,
+        2282.265693695153
+      ],
+      "size": [
+        270,
+        142
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 523
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 537
+        },
+        {
+          "name": "handle_frames",
+          "type": "INT",
+          "widget": {
+            "name": "handle_frames"
+          },
+          "link": 536
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            524
+          ]
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            526
+          ]
+        },
+        {
+          "name": "remaining_frames",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "info",
+          "type": "STRING",
+          "links": [
+            538
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "pizurny/ComfyUI-AV-Handles",
+        "ver": "4f19facf54e3b137dd80c5db4e6cec260cf03423",
+        "Node name for S&R": "AVHandlesTrim"
+      },
+      "widgets_values": [
+        8,
+        16
+      ]
+    },
+    {
+      "id": 195,
+      "type": "Note",
+      "pos": [
+        1392.4837298020323,
+        2484.1196346667857
+      ],
+      "size": [
+        258.98223050873,
+        88
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Trimming the 6 frames automatically back to original length"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 188,
+      "type": "ShowText|pysssss",
+      "pos": [
+        135.59930621717908,
+        2438.7971170771784
+      ],
+      "size": [
+        258.52291473593084,
+        96.17239090740895
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 517
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "Audio-only mode | Original frames: 63 | Handle frames added: 6 | Total frames: 69 | FPS: 16.00 | Audio: 3.960s → 4.335s"
+      ]
+    },
+    {
+      "id": 197,
+      "type": "ShowText|pysssss",
+      "pos": [
+        1681.5067892073484,
+        2466.3513180644463
+      ],
+      "size": [
+        296.23367650912655,
+        93.23574367182528
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 538
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "Original frames: 69 | Frames trimmed: 6 | Remaining frames: 63 | Audio: 4.335s → 3.960s"
+      ]
+    },
+    {
+      "id": 152,
+      "type": "KSampler",
+      "pos": [
+        684.4647561446968,
+        2032.460783944128
+      ],
+      "size": [
+        280,
+        474
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 531
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 444
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 445
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 446
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            521
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.54",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        20,
+        "fixed",
+        20,
+        2,
+        "uni_pc",
+        "simple",
+        1
+      ]
+    },
+    {
+      "id": 198,
+      "type": "Note",
+      "pos": [
+        984.3566363888958,
+        2049.222137080295
+      ],
+      "size": [
+        258.98223050873,
+        88
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "cfg of 2 seems to produce better results than default 6"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 191,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        2002.750511627678,
+        2280.5641143754065
+      ],
+      "size": [
+        704.2145227047577,
+        1032.2145227047577
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 524
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 526
+        },
+        {
+          "name": "meta_batch",
+          "shape": 7,
+          "type": "VHS_BatchManager",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "1.7.4",
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": {
+        "frame_rate": 16,
+        "loop_count": 0,
+        "filename_prefix": "AV-Handles_Example/AV",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": true,
+        "pingpong": false,
+        "save_output": true,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "AV_00002-audio.mp4",
+            "subfolder": "AV-Handles_Example",
+            "type": "output",
+            "format": "video/h264-mp4",
+            "frame_rate": 16,
+            "workflow": "AV_00002.png",
+            "fullpath": "X:\\ai\\Comfy_Dev\\ComfyUI_windows_portable\\ComfyUI\\output\\AV-Handles_Example\\AV_00002-audio.mp4"
+          }
+        }
+      }
+    },
+    {
+      "id": 186,
+      "type": "AVHandlesAdd",
+      "pos": [
+        -167.38697389891334,
+        2356.3713785923455
+      ],
+      "size": [
+        270,
+        186
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 516
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            518,
+            537
+          ]
+        },
+        {
+          "name": "total_frames",
+          "type": "INT",
+          "links": [
+            529
+          ]
+        },
+        {
+          "name": "handles_added",
+          "type": "INT",
+          "links": [
+            536
+          ]
+        },
+        {
+          "name": "info",
+          "type": "STRING",
+          "links": [
+            517
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "pizurny/ComfyUI-AV-Handles",
+        "ver": "87c0fed78cebfe3c67b5e84f7ba29fed053cf14e",
+        "Node name for S&R": "AVHandlesAdd"
+      },
+      "widgets_values": [
+        6,
+        false,
+        16
+      ]
+    }
+  ],
+  "links": [
+    [
+      442,
+      147,
+      0,
+      149,
+      0,
+      "CLIP"
+    ],
+    [
+      444,
+      153,
+      0,
+      152,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      445,
+      153,
+      1,
+      152,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      446,
+      153,
+      2,
+      152,
+      3,
+      "LATENT"
+    ],
+    [
+      449,
+      159,
+      0,
+      153,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      450,
+      149,
+      0,
+      153,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      451,
+      150,
+      0,
+      153,
+      2,
+      "VAE"
+    ],
+    [
+      452,
+      173,
+      0,
+      153,
+      3,
+      "AUDIO_ENCODER_OUTPUT"
+    ],
+    [
+      453,
+      160,
+      0,
+      153,
+      4,
+      "IMAGE"
+    ],
+    [
+      461,
+      147,
+      0,
+      159,
+      0,
+      "CLIP"
+    ],
+    [
+      485,
+      151,
+      0,
+      173,
+      0,
+      "AUDIO_ENCODER"
+    ],
+    [
+      516,
+      162,
+      0,
+      186,
+      1,
+      "AUDIO"
+    ],
+    [
+      517,
+      186,
+      4,
+      188,
+      0,
+      "STRING"
+    ],
+    [
+      518,
+      186,
+      1,
+      173,
+      1,
+      "AUDIO"
+    ],
+    [
+      521,
+      152,
+      0,
+      190,
+      0,
+      "LATENT"
+    ],
+    [
+      522,
+      150,
+      0,
+      190,
+      1,
+      "VAE"
+    ],
+    [
+      523,
+      190,
+      0,
+      189,
+      0,
+      "IMAGE"
+    ],
+    [
+      524,
+      189,
+      0,
+      191,
+      0,
+      "IMAGE"
+    ],
+    [
+      526,
+      189,
+      1,
+      191,
+      1,
+      "AUDIO"
+    ],
+    [
+      529,
+      186,
+      2,
+      153,
+      7,
+      "INT"
+    ],
+    [
+      531,
+      161,
+      0,
+      152,
+      0,
+      "MODEL"
+    ],
+    [
+      536,
+      186,
+      3,
+      189,
+      2,
+      "INT"
+    ],
+    [
+      537,
+      186,
+      1,
+      189,
+      1,
+      "AUDIO"
+    ],
+    [
+      538,
+      189,
+      3,
+      197,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 10,
+      "title": "Step 4 - Prompt",
+      "bounding": [
+        -210.53933227776395,
+        1685.3725814595327,
+        470,
+        560
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 11,
+      "title": "Step 1 - Load models",
+      "bounding": [
+        -642.5700031127923,
+        1709.5491980274219,
+        410,
+        557.5999755859375
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 12,
+      "title": "Step 2 - Upload audio & ref_image",
+      "bounding": [
+        -638.9639958649685,
+        2287.582749792235,
+        410,
+        630
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 14,
+      "title": "Basic sampling",
+      "bounding": [
+        374.46475614469665,
+        1962.4607839441271,
+        610,
+        560
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9229599817706833,
+      "offset": [
+        732.5700031127923,
+        -1679.5491980274219
+      ]
+    },
+    "frontendVersion": "1.28.8",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
