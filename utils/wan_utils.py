@@ -76,3 +76,30 @@ def is_wan_compatible(frames):
     if frames < 1:
         return False
     return (frames - 1) % 4 == 0
+
+
+def is_ltx2_compatible(frames):
+    """Check if frame count is LTX2-compatible (8n+1)"""
+    if frames < 1:
+        return False
+    return (frames - 1) % 8 == 0
+
+
+def calculate_ltx2_frames(target_frames):
+    """Round UP to next LTX2-compatible frame count (8n+1)"""
+    if target_frames <= 1:
+        return 1
+    n = math.ceil((target_frames - 1) / 8)
+    return max(1, 8 * n + 1)
+
+
+def calculate_next_ltx2_frames(current_frames):
+    """
+    Return current_frames if already LTX2-compatible, otherwise round up to next 8n+1.
+    """
+    if current_frames < 1:
+        return 1
+    if is_ltx2_compatible(current_frames):
+        return current_frames
+    n = math.ceil((current_frames - 1) / 8)
+    return 8 * n + 1
