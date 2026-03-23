@@ -21,12 +21,12 @@ Audio/Video handle management for ComfyUI workflows
 
 Add and remove stabilization frames with synchronized audio for video diffusion models.
 
-Video diffusion models (WAN S2V, WAN Fun Control etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
+Video diffusion models (WAN S2V, WAN Fun Control, LTX2, etc.) often need a few frames to stabilize before producing quality output. This node pack lets you:
 
 - Add repeated first frames as "handles" before your sequence
 - Sync audio silence to keep A/V perfectly aligned  
 - Trim handles after processing to restore original length
-- Round frame counts to WAN-compatible values (4n+1 pattern)
+- Round frame counts to WAN (4n+1) or LTX2 (8n+1) compatible values
 - Process audio-only with precise timing control via manual FPS
 
 **Typical workflow:**
@@ -78,17 +78,17 @@ Nodes will appear under: **video/handles**
 Adds handle frames by repeating the first frame + audio silence.
 
 **Required Inputs:**
-- `handle_frames` (INT) - Frames to add (default: 8, range: 0-100). Set to 0 with `round_to_wan` enabled for auto-WAN mode.
+- `handle_frames` (INT) - Frames to add (default: 8, range: 0-100). Set to 0 with a `padding_mode` enabled for auto mode.
 
 **Optional Inputs:**
 - `images` (IMAGE) - Input image batch (optional for audio-only)
 - `audio` (AUDIO) - Audio to sync
-- `round_to_wan` (BOOL) - Round to WAN-compatible count (4n+1)
+- `padding_mode` (ENUM) - Frame count rounding: `disabled`, `WAN (4n+1)`, `LTX2 (8n+1)`
 - `manual_fps` (FLOAT) - Manual FPS override (default: 0 = auto-detect, range: 0-120)
 
 **Outputs:** `images`, `audio`, `total_frames`, `handles_added`, `info`
 
-**Note:** Connect `handles_added` output to Trim node's `handle_frames` input for automatic sync (essential when using WAN rounding or auto-WAN mode).
+**Note:** Connect `handles_added` output to Trim node's `handle_frames` input for automatic sync (essential when using WAN/LTX2 rounding or auto mode).
 
 ### AV Handles Trim
 
@@ -148,11 +148,11 @@ Output: Original 3.0s audio restored ✓
 
 **Note:** For audio-only workflows, `manual_fps` is required. The nodes will warn if not set and default to 30 FPS.
 
-### WAN-Compatible Rounding (Auto-Sync)
+### Model-Compatible Rounding (Auto-Sync)
 ```
 Load Images (47 frames)
          ↓
-AV Handles Add (handle_frames: 8, round_to_wan: ✓)
+AV Handles Add (handle_frames: 8, padding_mode: "WAN (4n+1)")
 Output: 57 frames, handles_added: 10 (rounded to 4×14+1)
          ↓
 Process with WAN model
@@ -161,13 +161,27 @@ AV Handles Trim (handle_frames: ← connect handles_added)
 Output: 47 frames ✓ (automatic sync!)
 ```
 
-## WAN Compatibility
+```
+Load Images (47 frames)
+         ↓
+AV Handles Add (handle_frames: 8, padding_mode: "LTX2 (8n+1)")
+Output: 57 frames, handles_added: 10 (rounded to 8×7+1)
+         ↓
+Process with LTX2 model
+         ↓
+AV Handles Trim (handle_frames: ← connect handles_added)
+Output: 47 frames ✓ (automatic sync!)
+```
 
-**WAN models work best with frame counts:** `4n + 1`
+## Model Frame Compatibility
 
+**WAN models** work best with frame counts: `4n + 1`
 Valid counts: 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 57, 61, 65...
 
-When `round_to_wan` is enabled, the node adjusts to the nearest valid count.
+**LTX2 models** work best with frame counts: `8n + 1`
+Valid counts: 1, 9, 17, 25, 33, 41, 49, 57, 65, 73, 81, 89, 97...
+
+Select the appropriate `padding_mode` to automatically round to the nearest valid count.
 
 ## Audio/Video Synchronization
 
@@ -227,10 +241,11 @@ Issues and pull requests welcome! This is a simple utility pack, so let's keep i
 
 ---
 
-**Made for the ComfyUI community** | v1.3.0
+**Made for the ComfyUI community** | v1.4.0
 
 ## Changelog
 
+- **v1.4.0** - Added LTX2 (8n+1) model support, replaced `round_to_wan` toggle with `padding_mode` dropdown (disabled/WAN/LTX2)
 - **v1.3.0** - Added `handles_added` output for auto-sync with Trim node, WAN rounding always rounds up, auto-WAN mode (handle_frames=0)
 - **v1.2.0** - Made images optional for audio-only workflows, both nodes now fully support audio processing without video
 - **v1.1.0** - Added manual FPS input, improved audio handling for all tensor formats

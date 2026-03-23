@@ -131,3 +131,4 @@ logs/
 *.crt
 secrets/
 credentials/
+.claude/
