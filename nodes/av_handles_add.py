@@ -1,5 +1,8 @@
 import torch
-from ..utils.wan_utils import calculate_wan_frames, calculate_next_wan_frames, is_wan_compatible
+from ..utils.wan_utils import (
+    calculate_wan_frames, calculate_next_wan_frames, is_wan_compatible,
+    calculate_ltx2_frames, calculate_next_ltx2_frames, is_ltx2_compatible,
+)
 
 
 class AVHandlesAdd:
@@ -28,10 +31,8 @@ class AVHandlesAdd:
             "optional": {
                 "images": ("IMAGE",),
                 "audio": ("AUDIO",),
-                "round_to_wan": ("BOOLEAN", {
-                    "default": False,
-                    "label_on": "enabled",
-                    "label_off": "disabled"
+                "padding_mode": (["disabled", "WAN (4n+1)", "LTX2 (8n+1)"], {
+                    "default": "disabled"
                 }),
                 "manual_fps": ("FLOAT", {
                     "default": 0.0,
@@ -44,7 +45,7 @@ class AVHandlesAdd:
             }
         }
     
-    def add_handles(self, handle_frames, images=None, audio=None, round_to_wan=False, manual_fps=0.0):
+    def add_handles(self, handle_frames, images=None, audio=None, padding_mode="disabled", manual_fps=0.0):
         """
         Add frame handles and audio silence
 
@@ -52,7 +53,7 @@ class AVHandlesAdd:
             images: Input image tensor [B, H, W, C]
             handle_frames: Number of frames to add
             audio: Optional audio dict with 'waveform' and 'sample_rate'
-            round_to_wan: Round total frames to WAN-compatible count
+            padding_mode: Round total frames to WAN (4n+1) or LTX2 (8n+1) compatible count
             manual_fps: Manual FPS override (0 = auto-detect)
 
         Returns:
@@ -72,29 +73,29 @@ class AVHandlesAdd:
             batch_size = images.shape[0]
             original_frames = batch_size
 
-            # Round to WAN if requested
-            if round_to_wan:
-                if handle_frames == 0:
-                    # Auto-calculate minimum handles to reach next WAN value
-                    wan_frames = calculate_next_wan_frames(original_frames)
-                    actual_handles = wan_frames - original_frames
-                    print(f"[AVHandlesAdd] Auto WAN mode: {original_frames} frames → {wan_frames} frames (adding {actual_handles} handles)")
-                else:
-                    # Calculate target and round up to next WAN value
-                    target_frames = original_frames + handle_frames
-                    wan_frames = calculate_wan_frames(target_frames)
-                    actual_handles = wan_frames - original_frames
+            # Round to target padding if requested
+            if padding_mode != "disabled":
+                calc_frames = calculate_ltx2_frames if padding_mode == "LTX2 (8n+1)" else calculate_wan_frames
+                calc_next   = calculate_next_ltx2_frames if padding_mode == "LTX2 (8n+1)" else calculate_next_wan_frames
+                label = "LTX2" if padding_mode == "LTX2 (8n+1)" else "WAN"
 
-                    # With always-round-up logic, actual_handles should always be >= handle_frames
-                    # But add safety check just in case
+                if handle_frames == 0:
+                    # Auto-calculate minimum handles to reach next compatible value
+                    target_frames = calc_next(original_frames)
+                    actual_handles = target_frames - original_frames
+                    print(f"[AVHandlesAdd] Auto {label} mode: {original_frames} frames → {target_frames} frames (adding {actual_handles} handles)")
+                else:
+                    # Round up to next compatible value above original + requested handles
+                    target_frames = calc_frames(original_frames + handle_frames)
+                    actual_handles = target_frames - original_frames
+
                     if actual_handles < 0:
-                        # This shouldn't happen with ceil logic, but handle defensively
-                        wan_frames = calculate_next_wan_frames(original_frames)
-                        actual_handles = wan_frames - original_frames
+                        target_frames = calc_next(original_frames)
+                        actual_handles = target_frames - original_frames
                         print(f"[AVHandlesAdd] Warning: Negative handles detected, adjusted to {actual_handles}")
             else:
                 actual_handles = handle_frames
-                wan_frames = original_frames + handle_frames
+                target_frames  = original_frames + handle_frames
             
             # Add frame handles by repeating first frame
             if actual_handles > 0:
@@ -228,15 +229,16 @@ class AVHandlesAdd:
                 f"Total frames: {final_frames}",
             ]
 
-            # Add WAN status
-            if round_to_wan:
+            # Add padding status
+            if padding_mode != "disabled":
+                is_compat = is_ltx2_compatible if padding_mode == "LTX2 (8n+1)" else is_wan_compatible
+                lbl = "LTX2" if padding_mode == "LTX2 (8n+1)" else "WAN"
                 if handle_frames == 0 and actual_handles > 0:
-                    # Auto-WAN mode was used
-                    info_parts.append("✓ Auto-WAN (0 → next WAN value)")
-                elif is_wan_compatible(final_frames):
-                    info_parts.append("✓ WAN-compatible")
+                    info_parts.append(f"✓ Auto-{lbl} (0 → next {lbl} value)")
+                elif is_compat(final_frames):
+                    info_parts.append(f"✓ {lbl}-compatible")
                 else:
-                    info_parts.append("✗ Not WAN-compatible")
+                    info_parts.append(f"✗ Not {lbl}-compatible")
         else:
             # Audio-only mode: calculate virtual frame counts
             if audio is not None:
@@ -261,14 +263,16 @@ class AVHandlesAdd:
                     f"FPS: {fps_to_use:.2f}",
                 ]
                 
-                # Add WAN status for audio-only mode
-                if round_to_wan:
+                # Add padding status for audio-only mode
+                if padding_mode != "disabled":
+                    is_compat = is_ltx2_compatible if padding_mode == "LTX2 (8n+1)" else is_wan_compatible
+                    lbl = "LTX2" if padding_mode == "LTX2 (8n+1)" else "WAN"
                     if handle_frames == 0 and actual_handles > 0:
-                        info_parts.append("✓ Auto-WAN (0 → next WAN value)")
-                    elif is_wan_compatible(total_audio_frames):
-                        info_parts.append("✓ WAN-compatible")
+                        info_parts.append(f"✓ Auto-{lbl} (0 → next {lbl} value)")
+                    elif is_compat(total_audio_frames):
+                        info_parts.append(f"✓ {lbl}-compatible")
                     else:
-                        info_parts.append("✗ Not WAN-compatible")
+                        info_parts.append(f"✗ Not {lbl}-compatible")
                 
                 # Add FPS warning if not manually set
                 if manual_fps <= 0:

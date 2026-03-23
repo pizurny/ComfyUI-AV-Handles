@@ -1,5 +1,5 @@
 import torch
-from ..utils.wan_utils import is_wan_compatible
+from ..utils.wan_utils import is_wan_compatible, is_ltx2_compatible
 
 
 class AVHandlesTrim:
@@ -201,9 +201,11 @@ class AVHandlesTrim:
                 f"Remaining frames: {remaining_frames}",
             ]
             
-            # Check if result is WAN-compatible
+            # Check compatibility
             if is_wan_compatible(remaining_frames):
                 info_parts.append("✓ WAN-compatible")
+            if is_ltx2_compatible(remaining_frames):
+                info_parts.append("✓ LTX2-compatible")
         else:
             # Audio-only mode: calculate virtual frame counts
             if audio is not None:
@@ -228,9 +230,11 @@ class AVHandlesTrim:
                     f"FPS: {fps_to_use:.2f}",
                 ]
                 
-                # Check if result is WAN-compatible
+                # Check compatibility
                 if is_wan_compatible(remaining_audio_frames):
                     info_parts.append("✓ WAN-compatible")
+                if is_ltx2_compatible(remaining_audio_frames):
+                    info_parts.append("✓ LTX2-compatible")
                 
                 # Add FPS warning if not manually set
                 if manual_fps <= 0:
